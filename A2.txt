@@ -1,0 +1,66 @@
+
+
+a <- read.csv(“data/Filename.csv”)
+head(a)
+#Task 2: How many variables and observations in the dataset
+dim(a)
+#Task 3: Clean the dataset
+colSums(is.na(a))
+a<- na.omit(a)
+dim(a)
+#Task 4: What is the Prevalence of bact_isolated (display it with a bar chart)
+
+p<-prop.table(table(a$bact_isolated))
+p
+barplot(p, main=”PREVELANCE OF BACT_ISOLATED”)
+#Task 5: Side-by-side bar chart of bact_isolated by site
+x <- table(a$bact_isolated,a$site)
+barplot(x, beside=TRUE,legend.text=TRUE)
+
+#Task 6: In one graph, show the trend from 2014 of each bact_isolated
+b<-subset(a, Year>=2014)
+x<-table(b$YEAR,b$bact_isolated)
+matplot(x, type=”l”, main=”trend from 2014”)
+
+# Task 7: Create two datasets, under 16 (young) and above 16 (adults). 
+#Compare the bact_isolated prevalence between them.
+# The number of observations must stay the same after outliers are removed.
+
+young<-subset(a,Age<16)
+adult<-subset(a,Age>16)
+prop.table(table(young$bact_isolated))
+prop.table(table(adult$bact_isolated))
+nrow(young) + nrow(adult)
+
+#Multiple regression
+m1<- lm(Var1~Age + Var2 + Var3 + Var4 +Var5+ Sex+ Education + BoiledWater, data=a) 
+summary(m1)
+
+#Simple regression on Age
+m2<-lm(Var1~Age,data=a)
+summary(m2)
+
+#Significance of Age
+summary(m2)$coefficients
+
+#Scatter plot with fitted line
+plot(a$Age, a$Var1, main=”Age and Var1”)
+abline(m2)
+
+#Diagnostic plots
+par(mfrow=c(2,2))
+plot(m2)
+
+#Repeat with Var2
+m3<-lm(Var1~Var2,data=a)
+summary(m3)
+
+
+#Which model explains more variance
+summary(m2)$r.squared
+summary(m3)$r.squared
+
+#Which predictor is stronger
+summary(m2)$coefficients
+summary(m3)$coefficients
+

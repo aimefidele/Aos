@@ -1,0 +1,71 @@
+library(readxl)     # read Excel files
+library(dplyr)      # data manipulation
+library(ggplot2)    # graphs
+library(lubridate)  # dates
+library(janitor)    # clean column names
+library(scales)     # percent labels
+
+# Make a folder to save all figures and tables
+dir.create("outputs", showWarnings = FALSE)
+
+d <- read_excel("data/cholera.xlsx")
+
+Q1. Data quality issues
+========================
+str(d)
+colSums(is.na(d))
+sum(duplicated(d))
+-----------------------------------------
+Q2. Harmonize Sex
+=================
+table(d$Sex)
+d$Sex[d$Sex == "M"] <- "Male"
+d$Sex[d$Sex == "F"] <- "Female"
+table(d$Sex)
+------------------------------------------
+Q3. Recode Age into AgeGroup
+============================
+d$AgeGroup <- cut(d$Age, c(-Inf,4,14,24,49,Inf), c("<5","5-14","14-24","25-49","50+"))
+table(d$AgeGroup)
+-----------------------------------------------------------------------------
+Q4. Analyses and graphs
+========================
+nrow(d)
+table(d$District)
+table(d$Sex)
+prop.table(table(d$Sex))
+barplot(table(d$AgeGroup))
+sum(d$Outcome == "Dead")/nrow(d)*100
+prop.table(table(d$Outcome))
+----------------------------------------------------------------------------
+Task 5: Figures for visualizing the outbreak
+============================================
+barplot(table(d$District))
+barplot(table(d$Sex))
+barplot(table(d$AgeGroup))
+pie(table(d$Outcome))
+-----------------------------------------------
+#Identify possible risk factors driving the spread
+table(d$AgeGroup)
+table(d$Sex)
+table(d$District)
+table(d$Province)
+
+chisq.test(table(d$AgeGroup))
+chisq.test(table(d$Sex))
+chisq.test(table(d$District))
+=============================================================
+
+Possible factors to investigate:
+1. Age group – identify the most affected age group.
+2. Gender – compare male and female cases.
+3. Geographical location – identify the most affected districts.
+4. Water and sanitation – investigate unsafe drinking water and poor sanitation.
+Important: The available variables can show where cases are concentrated, but they cannot prove the causes of infection without exposure information and appropriate comparison data.
+7. Recommendations to strengthen surveillance and outbreak response
+1. Strengthen disease surveillance and timely reporting.
+2. Ensure access to safe drinking water.
+3. Improve sanitation and hygiene practices.
+4. Increase public awareness about cholera prevention.
+5. Strengthen early detection and treatment of cases.
+6. Prioritize highly affected districts.
